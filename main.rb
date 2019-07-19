@@ -74,27 +74,32 @@ end
   # 1. hash[position] = piece
   # 2. hash[piece] = position
 
-@space = "(A)".red
+row_arr = ("(A)".."(H)").to_a
 
-r1 = Array.new(8, "(A)")
-r2 = Array.new(8, "(B)") 
-r3 = Array.new(8, "(C)")
-r4 = Array.new(8, "(D)")
-r5 = Array.new(8, "(E)")
-r6 = Array.new(8, "(F)")
-r7 = Array.new(8, "(G)")
-r8 = Array.new(8, "(H)")
+r1 = row_arr
+r2 = r1.map { |e| e = e.gray }
+r3 = r1.map { |e| e = e.light_blue }
+r4 = r1.map { |e| e = e.green }
+r5 = r1.map { |e| e = e.yellow }
+r6 = r1.map { |e| e = e.pink }
+r7 = r1.map { |e| e = e.red }
+r8 = r1.map { |e| e = e.bg_red }
 
 @board_arr = [r1, r2, r3, r4, r5, r6, r7, r8]
 
-print @board_arr[6], "\n"
-print @board_arr[7], "\n\n"
+print "row_arr is an ", row_arr.class, " - ", row_arr.object_id, "\n" 
+print "r1 is an ", r1.class, " - ", r1.object_id, "\n"
+print "r2 is an ", r2.class, " - ", r2.object_id, "\n\n"
+
+@board_arr[0][3] = @board_arr[0][3].pink
+
+print row_arr, "\n"
+print r1, "\n\n"
 
 # rendering:
 
 def render
   board_arr = @board_arr
-  s = @space
 
   top = "╔" + "═══╦"*7 + "═══╗" 
   mid = "╠" + "═══╬"*7 + "═══╣"
@@ -102,16 +107,16 @@ def render
   side = "║"
   
   print top, "\n"
-  board_arr[0..6].each do |arr| # loop for each of 7 row hashes
+  board_arr[0..6].each do |row| # loop for each of 7 row hashes
     print side                  #=> "║"
-    arr.each do |e|             # loop for each of 8 elements
-      print e.red + side
+    row.each do |stat|             # loop for each of 8 elements
+      print stat + side
     end 
     print "\n", mid, "\n"
   end
   print side
-  board_arr[7].each do |e|  # final row array treated separately
-      print e.yellow + side
+  board_arr[7].each do |stat|  # final row array treated separately
+      print stat + side
     end 
   print "\n", bot, "\n"
 end

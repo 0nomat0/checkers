@@ -1,4 +1,6 @@
 
+# test comment for GitHub commit
+
 # black, red, green, yellow, blue, pink, light_blue, gray, bg_red, bg_light_blue, bg_pink
 
 require_relative 'string_colorize.rb'

@@ -1,1 +1,1 @@
-# checkers
+# ruby-checkers

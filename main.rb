@@ -3,6 +3,15 @@
 
 require_relative 'string_colorize.rb'
 
+class Player
+  attr_accessor :turn
+
+  def initialize (color, turn)
+    @color = color
+    @turn = turn
+  end
+end # class Player
+
 class Piece
   attr_accessor :color, :x, :y
   
@@ -109,9 +118,16 @@ end
 render
 
 # movement:
-  # +/-1 row, +/-1 column (use negative values for opposite team?)
-  # if adjacent-diag space n is occupied && if: 
-    # either space adjacent-diag to n is open --> 
+  # + 1 row, +/-1 column (use negative values for opposite team?)
+  # IF (x+1,y+1) is occupied & (x+2,y+2) is open
+  # OR (x-1,y+1) is occupied & (x-2,y+2) is open
+    #--> THEN allow move to second space, check for more jumps
+  # ELSIF (x+1,y+1) or (x-1,y+1) are open
+    #--> THEN Allow single move
+  # ELSIF (x+1,y+1) OR (x-1,y+1) are open & y == 0 or 8
+    #--> THEN Allow move & king the piece
+
+    #=>
   # if x or y >8 or < 0 --> invalid move
     # 
 

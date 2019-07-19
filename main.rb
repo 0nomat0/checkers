@@ -1,5 +1,36 @@
 
-# black, red, green, yellow, blue, pink, light_blue, gray, bg_red, bg_light_blue, bg_pink
+# linear flow:
+  # players choose color palette?
+      # player top/bot chosen randomly? player_bot goes first
+  # RENDER board with default states
+      # (or with each piece in default state)
+  # EACH TURN
+      # rotate board?
+      # take input
+      # change board state (or piece state)
+          # unless move invalid
+          # unless input invalid
+      # (additional turn if appl.)    
+      # (king if dest y = 0 || 7 depending on color)
+      # (repeat checks as needed)
+      # update collection(s)
+
+# movement:
+  # player_top will move y+1, x+/-1
+  # player_bot will move y-1, x+/-1
+  
+  # def top_input ____for example_______
+    # piece and move is :gets --> 'p.l'
+    # corresponding array object = [x][y]
+    # (lookup with hash[p] = x,y ?)
+    # check dest for vacancy: (x2,y2) || (x3,y3)
+    # assign "__" to origin r[x][y]
+      # and to piece jumped if appl.
+    # assign p to dest r[x][y]
+    # check for doublejump
+    # next player's turn or :gets doublejump
+
+# black , red , green , yellow , blue , pink , light_blue , gray , bg_red, bg_light_blue , bg_pink
 
 require_relative 'string_colorize.rb'
 
@@ -15,107 +46,132 @@ end # class Player
 class Piece
   attr_accessor :color, :x, :y
   
-  def initialize (color, x, y)
-  @color = color
-  @x = x
-  @y = y
+  def initialize (name, color, x, y)
+    @name = name
+    @color = color
+    @x = x
+    @y = y
+    $board[x][y] = colorize(" #{@name} ")
   end
 
-  def self.l
+  def l
   end
 
-  def self.r
+  def r
+    p [x+1, y+1]
   end
 
-  private
+  # utility method:
+  def loc; [self.x, self.y] end
 
-  def self.kingme
+  def move(new_x, new_y)
+    $board[@x][@y] = "   "
+    $board[new_x][new_y] = colorize(" #{@name} ")
+    @x = new_x
+    @y = new_y
+  end
+
+  private def colorize(str)
+    # if @color == @color0
+    if @color == "blue"
+      str.black.bg_light_blue
+    elsif @color == "pink"
+      str.black.bg_pink
+    end
+  end
+
+  def crown
   end
 
 end # class Piece
 
 class King < Piece
-  attr_accessor :color, :x, :y
-
-  def initialize (color, x, y)
-  @color = color
-  @x = x
-  @y = y
-  end
-  
-  def self.ul
+  # inherited:
+    # attr_accessor *___
+    # def initialize
+    # :l :r
+  def ul
   end
 
-  def self.ur
+  def ur
   end
 
-  def self.dl
+  def dl
   end
 
-  def self.dr
+  def dr
   end
 
 end # class King
 
-redking = King.new("red", 0, 3)
-p redking
-
-# hash_red
-# hash_white
-# pos[piece] = loc
-
 # board_arr contains 8 row arrays
-# each row array contains 8 positions / pieces
+# each row array contains 4 positions + 4 blanks
 
-row_init1 = (" a ".." h ").to_a
-row_init2 = (" i ".." p ").to_a
+$board = Array.new(8) {Array.new(8)}
+$board.each_with_index do |row, index|
+  n = index%2 == 0 ? 1 : 0
+  row.map!.with_index do |sq, index|
+    index%2==n ? "░░░" : "   "
+  end
+end
 
-r1 = row_init1
-r2 = row_init2.each { |p| p = p.gray }
-r3 = r1.map { |p| p = p.light_blue }
-r4 = r2.map { |p| p = p.red }
-r5 = r1.map { |p| p = p.yellow }
-r6 = r2.map { |p| p = p.pink }
-r7 = r1.map { |p| p = p.black.bg_light_blue }
-r8 = r2.map { |p| p = p.black.bg_pink }
+c = Piece.new("c", "pink", 1, 1)
+p c.loc #
+c.move(2,2)
 
-@board_arr = [r1, r2, r3, r4, r5, r6, r7, r8]
+p [c.x, c.y] #
+c.r
 
-print "row_init1 is an ", row_init1.class, " - ", row_init1.object_id, "\n" 
-print "row_init2 is an ", row_init2.class, " - ", row_init2.object_id, "\n" 
-print "r1 is an ", r1.class, " - ", r1.object_id, "\n"
-print "r2 is an ", r2.class, " - ", r2.object_id, "\n"
-print "r3 is an ", r3.class, " - ", r3.object_id, "\n\n"
+p c.loc
 
-print row_init1, "\n"
-print r1, "\n\n"
+
+r = []
+r[0] = (" a ".." h ").to_a
+r[1] = (" i ".." p ").to_a.each { |p| p = p.gray }
+r[2] = r[0].map { |p| p = p.light_blue }
+r[3] = r[1].map { |p| p = p.black.bg_red }
+r[4] = r[0].map { |p| p = p.yellow }
+r[5] = r[1].map { |p| p = p.pink }
+r[6] = r[0].map { |p| p = p.black.bg_light_blue }
+r[7] = r[1].map { |p| p = p.black.bg_pink }
+
 
 # rendering:
 
-def render
-  board_arr = @board_arr
-
-  top = "╔" + "═══╦"*7 + "═══╗" 
-  mid = "╠" + "═══╬"*7 + "═══╣"
-  bot = "╚" + "═══╩"*7 + "═══╝"
+def render(board_arr)
+  top = "  ╔" + "═══╦"*7 + "═══╗" 
+  mid = "  ╠" + "═══╬"*7 + "═══╣"
+  bot = "  ╚" + "═══╩"*7 + "═══╝"
   side = "║"
-  
-  print top, "\n"
-  board_arr[0..6].each do |row| # loop for each of 7 row hashes
-    print side                  #=> "║"
-    row.each do |state|             # loop for each of 8 elements
+  print " "*4, Array[*0..7].join("   ")
+  print "\n", top, "\n"
+  # loop for each of 8 row hashes
+  board_arr[0..7].each_with_index do |row, index|
+    print "#{index} " + side
+    row.each do |state|             
       print state + side
-    end 
-    print "\n", mid, "\n"
+    end
+    
+    print "\n", index == 7 ? bot : mid, "\n"
   end
-  print side
-  board_arr[7].each do |state|  # final row array treated separately
-      print state + side
-    end 
-  print "\n", bot, "\n"
 end
 
-render
+render($board)
+
+a = " a ".black.bg_light_blue
+b = " b ".black.bg_light_blue
+m = " m ".black.bg_pink
+N = "<N>".black.bg_pink   # King?
+M = "ᵕMᵕ".black.bg_pink
+# N = " N ".black.bg_pink.bold.underline   # King?
+
+puts
+puts "╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗"
+puts "║#{a}║░░░║   ║░░░║#{b}║░░░║#{N}║░░░║"
+puts "╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣"
+puts "║░░░║   ║░░░║#{m}║░░░║#{M}║░░░║   ║"
+puts "╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣"
+
 
 # movement:
   # + 1 row, +/-1 column (use negative values for opposite team?)
@@ -141,3 +197,22 @@ render
 # ╠═══╬═══╣
 # ║ c ║ d ║
 # ╚═══╩═══╝
+#
+#        0     1     2     3     4     5     6     7
+#      -----------------------------------------------
+#   0-| 0,0 | 0,1 | 0,2 | 0,3 | 0,4 | 0,5 | 0,6 | 0,7 |
+#      -----------------------------------------------
+#   1-| 1,0 | 1,1 | 1,2 | 1,3 | 1,4 | 1,5 | 1,6 | 1,7 |
+#      -----------------------------------------------
+#   2-| 2,0 | 2,1 | 2,2 | 2,3 | 2,4 | 2,5 | 2,6 | 2,7 |
+#      -----------------------------------------------
+#   3-| 3,0 | 3,1 | 3,2 | 3,3 | 3,4 | 3,5 | 3,6 | 3,7 |
+#      -----------------------------------------------
+#   4-| 4,0 | 4,1 | 4,2 | 4,3 | 4,4 | 4,5 | 4,6 | 4,7 |
+#      -----------------------------------------------
+#   5-| 5,0 | 5,1 | 5,2 | 5,3 | 5,4 | 5,5 | 5,6 | 5,7 |
+#      -----------------------------------------------
+#   6-| 6,0 | 6,1 | 6,2 | 6,3 | 6,4 | 6,5 | 6,6 | 6,7 |
+#      -----------------------------------------------
+#   7-| 7,0 | 7,1 | 7,2 | 7,3 | 7,4 | 7,5 | 7,6 | 7,7 |
+#      -----------------------------------------------

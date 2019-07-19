@@ -1,8 +1,8 @@
 
 class String
   # colorization
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
+  def colorize(color_code, effect=0)
+    "\e[#{color_code}m#{self}\e[#{effect}m"
   end
 
   def black
@@ -47,6 +47,14 @@ class String
 
   def bg_pink
     colorize(45)
+  end
+
+  def bold
+    colorize(1, 22)
+  end
+
+  def underline
+    colorize(4, 24)
   end
 
 end

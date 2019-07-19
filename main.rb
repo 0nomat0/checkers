@@ -1,99 +1,84 @@
 
-class String
-  # colorization
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
+# black, red, green, yellow, blue, pink, light_blue, gray, bg_red, bg_light_blue, bg_pink
+
+require_relative 'string_colorize.rb'
+
+class Piece
+  attr_accessor :color, :x, :y
+  
+  def initialize (color, x, y)
+  @color = color
+  @x = x
+  @y = y
   end
 
-  def black
-    colorize(30)
-  end  
-
-  def red
-    colorize(31)
+  def self.l
   end
 
-  def green
-    colorize(32)
+  def self.r
   end
 
-  def yellow
-    colorize(33)
+  private
+
+  def self.kingme
   end
 
-  def blue
-    colorize(34)
+end # class Piece
+
+class King < Piece
+  attr_accessor :color, :x, :y
+
+  def initialize (color, x, y)
+  @color = color
+  @x = x
+  @y = y
+  end
+  
+  def self.ul
   end
 
-  def pink
-    colorize(35)
+  def self.ur
   end
 
-  def light_blue
-    colorize(36)
+  def self.dl
   end
 
-  def gray
-    colorize(37)
+  def self.dr
   end
 
-  def bg_red
-    colorize(41)
-  end
-end
+end # class King
 
-# p = "(A)"
-
-# puts p
-# puts p.red
-# puts p.black
-# puts p.green
-# puts p.gray
-# puts p.bg_red.black
-
-# def p_assign(p=" ")
-
-# a = "a"
-# # p = a
-# p = " "
-# n = 8
-
-# puts "----"*n
-# n.times do
-#   print  "| #{p} "*n
-#   puts "|"
-#   print "----"*n
-#   print "\n"
-# end
+redking = King.new("red", 0, 3)
+p redking
 
 # hash_red
 # hash_white
 # pos[piece] = loc
 
-# board_arr contains 8 column hashes:
-  # 1. hash[position] = piece
-  # 2. hash[piece] = position
+# board_arr contains 8 row arrays
+# each row array contains 8 positions / pieces
 
-row_arr = ("(A)".."(H)").to_a
+row_init1 = (" a ".." h ").to_a
+row_init2 = (" i ".." p ").to_a
 
-r1 = row_arr
-r2 = r1.map { |e| e = e.gray }
-r3 = r1.map { |e| e = e.light_blue }
-r4 = r1.map { |e| e = e.green }
-r5 = r1.map { |e| e = e.yellow }
-r6 = r1.map { |e| e = e.pink }
-r7 = r1.map { |e| e = e.red }
-r8 = r1.map { |e| e = e.bg_red }
+r1 = row_init1
+r2 = row_init2.each { |p| p = p.gray }
+r3 = r1.map { |p| p = p.light_blue }
+r4 = r2.map { |p| p = p.red }
+r5 = r1.map { |p| p = p.yellow }
+r6 = r2.map { |p| p = p.pink }
+r7 = r1.map { |p| p = p.black.bg_light_blue }
+r8 = r2.map { |p| p = p.black.bg_pink }
 
 @board_arr = [r1, r2, r3, r4, r5, r6, r7, r8]
 
-print "row_arr is an ", row_arr.class, " - ", row_arr.object_id, "\n" 
+print "row_init1 is an ", row_init1.class, " - ", row_init1.object_id, "\n" 
+print "row_init2 is an ", row_init2.class, " - ", row_init2.object_id, "\n" 
 print "r1 is an ", r1.class, " - ", r1.object_id, "\n"
-print "r2 is an ", r2.class, " - ", r2.object_id, "\n\n"
+print "r2 is an ", r2.class, " - ", r2.object_id, "\n"
+print "r3 is an ", r3.class, " - ", r3.object_id, "\n\n"
 
-@board_arr[0][3] = @board_arr[0][3].pink
-
-print row_arr, "\n"
+print row_init1, "\n"
 print r1, "\n\n"
 
 # rendering:
@@ -109,32 +94,26 @@ def render
   print top, "\n"
   board_arr[0..6].each do |row| # loop for each of 7 row hashes
     print side                  #=> "║"
-    row.each do |stat|             # loop for each of 8 elements
-      print stat + side
+    row.each do |state|             # loop for each of 8 elements
+      print state + side
     end 
     print "\n", mid, "\n"
   end
   print side
-  board_arr[7].each do |stat|  # final row array treated separately
-      print stat + side
+  board_arr[7].each do |state|  # final row array treated separately
+      print state + side
     end 
   print "\n", bot, "\n"
 end
 
 render
 
-# def render2
-#   s = @space
-#   print "╔═══", "╦═══"*7, "╗", "\n"
-#   7.times do
-#     print "║#{s}"*8, "║ \n",
-#     "╠═══", "╬═══"*7, "╣", "\n"
-#   end
-#   print"║#{s}"*8, "║ \n",
-#   "╚═══", "╩═══"*7, "╝", "\n"
-# end
-
-# move piece: +/-1 row, +/-1 column
+# movement:
+  # +/-1 row, +/-1 column (use negative values for opposite team?)
+  # if adjacent-diag space n is occupied && if: 
+    # either space adjacent-diag to n is open --> 
+  # if x or y >8 or < 0 --> invalid move
+    # 
 
 # top1, top2, top3 = "╔═══" , "╦═══" , "╗" 
 # spa1, spa2, spa3 = "║#{s}", "║#{s}", "║"

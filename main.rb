@@ -77,12 +77,21 @@ class Piece
 
   # multiply y based on piece color [1,-1]
   # check 
+
   def l
     move(@x-1, @y+@side)
   end
 
   def r
     move(@x+1, @y+@side)
+  end
+
+  def dl
+    move(@x-1, @y+1)
+  end
+  
+  def dr
+    move(@x+1, @y+1)
   end
 
   # utility method:
@@ -135,22 +144,6 @@ class King < Piece
     $board[y][x] = colorize("ᵕ#{@id.upcase}ᵕ")
   end
 
-  def ul
-    move(@x-1, @y-1)
-  end
-
-  def ur
-    move(@x+1, @y-1)
-  end
-
-  def dl
-    move(@x-1, @y+1)
-  end
-
-  def dr
-    move(@x+1, @y+1)
-  end
-
 end # class King
 
 # $board contains 8 row arrays
@@ -163,22 +156,6 @@ $board.each_with_index do |row, index|
     index%2 == n ? "░░░" : "   "
   end
 end
-
-c = Piece.new("c", $sides[0], 3, 7)
-m = Piece.new("m", $sides[1], 2, 0)
-m = King.new(m)
-
-p c.loc
-
-p c.side #
-# # c.move(2,2)
-# c.r
-# p [c.x, c.y] #
-# c.l
-
-# p c.loc
-
-
 
 #
   # r = []
@@ -212,14 +189,17 @@ def render(board_arr)
   end
 end
 
+c = Piece.new("c", $sides[0], 3, 7)
+m = Piece.new("m", $sides[1], 2, 0)
+m = King.new(m)
+
+p c.loc
+p c.side
+
 render($board)
-c.r
 m.dr
-render($board)
 c.l
-m.dl
 render($board)
-puts
 
 #
   # a = " a ".black.bg_light_blue

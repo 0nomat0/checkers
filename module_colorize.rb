@@ -8,7 +8,6 @@ module Colorize
   end
 
   def piece(color)
-
   end
     
   def set_color(color_code, effect=0)

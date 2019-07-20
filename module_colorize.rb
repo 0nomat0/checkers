@@ -1,69 +1,70 @@
 module Colorize
 
-  class String
-    # colorization
-
-    private
-    def colorize(color_code, effect=0)
-      "\e[#{color_code}m#{self}\e[#{effect}m"
+  def colorize(str)
+    case @color
+      when "blue" then str.black.bg_light_blue
+      when "pink" then str.black.bg_pink
     end
+  end
 
-    public
-    def black
-      colorize(30)
-    end  
+  def piece(color)
 
-    def red
-      colorize(31)
-    end
-
-    def green
-      colorize(32)
-    end
-
-    def yellow
-      colorize(33)
-    end
-
-    def blue
-      colorize(34)
-    end
-
-    def pink
-      colorize(35)
-    end
-
-    def light_blue
-      colorize(36)
-    end
-
-    def gray
-      colorize(37)
-    end
-
-    def bg_red
-      colorize(41)
-    end
-
-    def bg_light_blue
-      colorize(46)
-    end
-
-    def bg_pink
-      colorize(45)
-    end
-
-    def bold
-      colorize(1, 22)
-    end
-
-    def underline
-      colorize(4, 24)
-    end
-
-  end # class String
-
-  def set_color
+  end
     
+  def set_color(color_code, effect=0)
+    "\e[#{color_code}m#{self}\e[#{effect}m"
+  end
+
+  def black
+    set_color(30)
+  end  
+
+  def red
+    set_color(31)
+  end
+
+  def green
+    set_color(32)
+  end
+
+  def yellow
+    set_color(33)
+  end
+
+  def blue
+    set_color(34)
+  end
+
+  def pink
+    set_color(35)
+  end
+
+  def light_blue
+    set_color(36)
+  end
+
+  def gray
+    set_color(37)
+  end
+
+  def bg_red
+    set_color(41)
+  end
+
+  def bg_light_blue
+    set_color(46)
+  end
+
+  def bg_pink
+    set_color(45)
+  end
+
+  def bold
+    set_color(1, 22)
+  end
+
+  def underline
+    set_color(4, 24)
+  end  
 
 end # module Colorize

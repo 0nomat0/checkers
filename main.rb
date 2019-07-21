@@ -1,4 +1,4 @@
-# linear flow:
+# outline brainstorm 190719
   # players choose color palette?
       # player top/bot chosen randomly? player_bot goes first
   # RENDER board with default states
@@ -14,39 +14,11 @@
         # repeat checks as needed
       # change turn ; render
 
-  # movement:
-    # player_top will move y+1, x+/-1
-    # player_bot will move y-1, x+/-1
-    
-    # def top_input ____for example_______
-      # move piece is :gets --> 'p.l'
-      # piece p (array object) = [x][y]
-      # lookup with hash? hash[p] = x,y
-      # check dest for vacancy: (x2,y2) || (x3,y3)
-      # assign "__" to origin r[x][y]
-        # and to piece jumped if appl.
-      # assign p to dest r[x][y]
-      # check for doublejump
-      # next player's turn or :gets doublejump
-
-  # movement_old:
-    # IF (x+1,y+1) is occupied & (x+2,y+2) is open
-    # OR (x-1,y+1) is occupied & (x-2,y+2) is open
-      #--> THEN allow move to second space, check for more jumps
-    # ELSIF (x+1,y+1) or (x-1,y+1) are open
-      #--> THEN Allow single move
-    # ELSIF (x+1,y+1) OR (x-1,y+1) are open & y == 0 or 8
-      #--> THEN Allow move & king the piece
-
-      #=>
-    # if x or y >8 or < 0 --> invalid move
-      # 
 
 # black , red , green , yellow , blue , pink , light_blue , gray , bg_red, bg_light_blue , bg_pink
 
-# require_relative 'string_colorize.rb'
 require_relative 'module_colorize.rb'
-include Colorize # changed from ' String.include Colorize'
+include Colorize 
 
 $sides = [["pink", -1], ["blue", 1]]
 
@@ -149,6 +121,8 @@ end # class King
 # $board contains 8 row arrays
 # each row array contains 4 positions + 4 blanks
 
+# "The board should be placed so that there is a light corner square nearest each player’s right-hand side and a dark corner square nearest each player’s left-hand side."
+
 $board = Array.new(8) {Array.new(8)}
 $board.each_with_index do |row, index|
   n = index%2 == 0 ? 1 : 0
@@ -246,3 +220,42 @@ render($board)
 #      -----------------------------------------------
 #   7-| 0,7 | 1,7 | 2,7 | 3,7 | 4,7 | 5,7 | 6,7 | 7,7 |
 #      -----------------------------------------------
+
+# >> [3, 7]
+# >> -1
+# >>     0   1   2   3   4   5   6   7
+# >>   ╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗
+# >> 0 ║   ║░░░║\e[46m\e[30mᵕMᵕ\e[0m\e[0m║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 1 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 2 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 3 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 4 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 5 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 6 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 7 ║░░░║   ║░░░║\e[45m\e[30m c \e[0m\e[0m║░░░║   ║░░░║   ║
+# >>   ╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝
+# >>     0   1   2   3   4   5   6   7
+# >>   ╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗
+# >> 0 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 1 ║░░░║   ║░░░║\e[46m\e[30m m \e[0m\e[0m║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 2 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 3 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 4 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 5 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 6 ║   ║░░░║\e[45m\e[30m c \e[0m\e[0m║░░░║   ║░░░║   ║░░░║
+# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
+# >> 7 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
+# >>   ╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝

@@ -1,4 +1,12 @@
 
+start
+render
+gets
+interpret
+move
+render
+next_turn
+
 # object list -- roughly linear.  not totally clear on where each method should be defined.
 
 module Movement

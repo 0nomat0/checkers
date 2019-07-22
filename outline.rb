@@ -64,7 +64,7 @@ side
 
 # hypothetical :turn "master method"
 
-# class ?
+# class ? or module ?
 def turn(side, active_piece=nil)
   # active_piece argument will be defined for double-jumps
   if active_piece==nil     
@@ -82,7 +82,7 @@ def turn(side, active_piece=nil)
     turn(side*-1)
 end
 
-# class Piece
+# move module? (included in Piece?)
 def convert_to_vector(input)
   if active_piece.is_king?
     case input      # or simply 'vector = input' when king?
@@ -102,7 +102,7 @@ def convert_to_vector(input)
   end
 end
 
-# class Piece 
+# move module? (included in Piece?)
 def nav(vector)   # called in :turn > active_piece.nav()
   # check vector*1
     # is on board?
@@ -114,7 +114,7 @@ def nav(vector)   # called in :turn > active_piece.nav()
   # check for :crown --> make king?
 end
 
-# class Piece
+# move module? (included in Piece?)
 def move(dest, crown?)  # called in :turn > active_piece.move()
   # updates dest in board array
   # updates piece with new coordinates

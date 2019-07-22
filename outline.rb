@@ -103,7 +103,7 @@ def convert_to_vector(input)
 end
 
 # class Piece 
-def nav(vector)
+def nav(vector)   # called in :turn > active_piece.nav()
   # check vector*1
     # is on board?
     # if vacant, move
@@ -115,7 +115,7 @@ def nav(vector)
 end
 
 # class Piece
-def move(dest, crown?)
+def move(dest, crown?)  # called in :turn > active_piece.move()
   # updates dest in board array
   # updates piece with new coordinates
   # updates jumped pieces?

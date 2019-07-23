@@ -67,22 +67,23 @@ side
 # class ? or module ?
 def turn(side, active_piece=nil)
   # active_piece argument will be defined for double-jumps
-  if active_piece==nil     
-    print "Choose a piece to move"
-    active_piece = gets.chomp
+  if active_piece==nil              
+    puts "Choose a piece to move"
+    active_piece = eval gets.chomp
   end
-  print "What's your vector victor"
-  input = gets.chomp
-  vector = active_piece.convert_to_vector(input)
+  puts "Choose a move for piece #{active_piece.id}"
+  input = gets.chomp.to_sym
+  active_piece.send(input)
+  vector = active_piece.convert_to_vector(input) ### change to public_send type method
   dest = active_piece.nav(vector)     # :nav turns vector into a move -- checks validity, jumps, crowning etc
-  active_piece.move(dest, crown?)      # or board.move ?
-  if again?
+  active_piece.move(dest, crown?)      ### crown doesn't yet exist
+  if again?     ### doesn't yet exist
     turn(side, active_piece)
   else
     turn(side*-1)
 end
-
-# move module? (included in Piece?)
+ 
+# module Move -- included in Piece?
 def convert_to_vector(input)
   if active_piece.is_king?
     case input      # or simply 'vector = input' when king?

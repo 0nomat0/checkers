@@ -107,6 +107,7 @@ class Board
 
 end # class Board
 
+# TESTING:
 def coords_test
   boardxy = Array.new(8) { Array.new(8) }
   

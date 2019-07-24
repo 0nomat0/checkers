@@ -4,12 +4,16 @@ module Colorize
     case @color
       when "blue" then str.black.bg_light_blue
       when "pink" then str.black.bg_pink
+      when "red" then str.bg_red
+      when "gray" then str.red.bg_gray
     end
   end
 
-  def piece(color)
+  def pieceify
+    spacer = self.class == King ? "ᵕ" : " "  # if piece is a King, display its crown
+    colorize("#{spacer}#{@id}#{spacer}")
   end
-    
+  
   def set_color(color_code, effect=0)
     "\e[#{color_code}m#{self}\e[#{effect}m"
   end
@@ -49,13 +53,16 @@ module Colorize
   def bg_red
     set_color(41)
   end
+  def bg_pink
+    set_color(45)
+  end
 
   def bg_light_blue
     set_color(46)
   end
 
-  def bg_pink
-    set_color(45)
+  def bg_gray
+    set_color(47)
   end
 
   def bold

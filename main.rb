@@ -16,19 +16,23 @@
 # black , red , green , yellow , blue , pink , light_blue , gray , bg_red, bg_light_blue , bg_pink
 
 require_relative 'module_colorize.rb'
-include Colorize 
+include Colorize
 
-$sides = [["pink", -1], ["blue", 1]]
+$sides = { -1 => "pink", 1 => "blue" }
+
+# TODO: Change coord parameters to single [x,y] array instead of two separate params x,y
+  # Better to always see position in [x,y] pair
 
 class Piece
   attr_accessor :id, :color, :side, :x, :y
-  def initialize (id, side, x, y, board)
-    @id = id
-    @color = side[0]
-    @side = side[1]
-    @x, @y = x, y
-    @board = board
-    @board[@x, @y] = colorize(" #{@id} ")
+
+  def initialize (id, side, x, y, board) 
+    @id = id                # == single lowercase letter
+    @side = side            # == -1 or 1
+    @color = $sides[side]   # == color string from $sides global
+    @x, @y = x, y           # == 0..7, 0..7 ; both should never be even or odd
+    @board = board          # == board object
+    @board[@x, @y] = pieceify
   end
   
   def l; move(@x-1, @y+@side) end
@@ -46,8 +50,7 @@ class Piece
   # takes dest args, sets origin blank, assigns colored string to array dest, assigns dest to piece's x,y
   def move(new_x, new_y)
     @board[@x, @y] = "   "
-    @board[new_x, new_y] = colorize(" #{@id} ")
-    # $board[new_x][new_y] = colorize(@id, @color)  # need a module that does this
+    @board[new_x, new_y] = pieceify
     @x, @y = new_x, new_y
   end
 
@@ -57,20 +60,28 @@ class Piece
     
 end # class Piece
 
+
 class King < Piece
 
   def initialize(piece, board)
-    @id = piece.id.upcase
-    @color = piece.color
-    @x, @y = piece.x, piece.y
-    @board = board
-    @board[@x, @y] = colorize("ᵕ#{@id}ᵕ")
+    @id = piece.id.upcase       # == upcase original piece id
+    @color = piece.color        # == color from piece
+    @x, @y = piece.x, piece.y   # == pos from piece
+    @board = board              # == board object
+    @board[@x, @y] = pieceify
   end
 
 end # class King
 
+
 # @board contains 8 row arrays
 # each row array contains 4 positions + 4 blanks
+
+# TODO: Change board array to contain actual piece objects
+  # No need to create 24 variables for pieces, pieces can be located by Array.find(id)
+  # Is more object-y; when moved, the entire piece object is moved in the array
+  #   instead of just moving strings around (e.g. " c ", "ᵕMᵕ"). Board array contains
+  #   the actual object, render method prints the object's representation to the screen.
 
 class Board
   attr_accessor :board
@@ -107,6 +118,7 @@ class Board
 
 end # class Board
 
+
 # TESTING:
 def coords_test
   boardxy = Array.new(8) { Array.new(8) }
@@ -121,8 +133,8 @@ pp coords_test
 
 board = Board.new
 
-c = Piece.new('c', $sides[0], 4, 7, board)
-m = Piece.new('m', $sides[1], 3, 0, board)
+c = Piece.new('c', -1, 4, 5, board)
+m = Piece.new('m', 1, 3, 0, board)
 m = King.new(m, board)
 board.render
 c.r

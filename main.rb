@@ -33,10 +33,12 @@ class Piece
   
   def l; move(@x-1, @y+@side) end
   def r; move(@x+1, @y+@side) end
-  # def ul; move(@x-1, @y+1) end
-  # def ur; move(@x+1, @y+1) end
-  def dl; move(@x-1, @y-1) end
-  def dr; move(@x+1, @y-1) end
+  
+  ## move ul,ur,dl,dr to King class?
+  # def ul; move(@x-1, @y-1) end
+  # def ur; move(@x+1, @y-1) end
+  def dl; move(@x-1, @y+1) end
+  def dr; move(@x+1, @y+1) end
 
   # utility method :loc
   def loc; [@x, @y] end
@@ -70,15 +72,13 @@ end # class King
 # @board contains 8 row arrays
 # each row array contains 4 positions + 4 blanks
 
-# official games place dark corners at players' left-hand sides
-
 class Board
   attr_accessor :board
   def initialize
     @board = Array.new(8) { Array.new(8) }
   
     @board.each_with_index do |col, index|
-      n = index%2 == 0 ? 1 : 0
+      n = index%2 == 0 ? 0 : 1
       col.map!.with_index do |sq, index|
         index%2 == n ? "░░░" : "   "
       end
@@ -121,8 +121,8 @@ pp coords_test
 
 board = Board.new
 
-c = Piece.new('c', $sides[0], 3, 7, board)
-m = Piece.new('m', $sides[1], 2, 0, board)
+c = Piece.new('c', $sides[0], 4, 7, board)
+m = Piece.new('m', $sides[1], 3, 0, board)
 m = King.new(m, board)
 board.render
 c.r

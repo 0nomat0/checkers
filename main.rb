@@ -39,12 +39,13 @@ class Piece
   # creates instance methods p.color, p.color=, p.x, p.x=, etc ?
   attr_accessor :id, :color, :side, :x, :y 
   
-  def initialize (id, side, x, y)
+  def initialize (id, side, x, y, board)
     @id = id
     @color = side[0]
     @side = side[1]
     @x, @y = x, y
-    $board[y][x] = colorize(" #{@id} ")
+    @board = board
+    @board[@x, @y] = colorize(" #{@id} ")
   end
 
   # multiply y based on piece color [1,-1]
@@ -71,8 +72,8 @@ class Piece
 
   # takes dest args, sets origin blank, assigns colored string to array dest, assigns dest to piece's x,y
   def move(new_x, new_y)
-    $board[@y][@x] = "   "
-    $board[new_y][new_x] = colorize(" #{@id} ")
+    @board[@x, @y] = "   "
+    @board[new_x, new_y] = colorize(" #{@id} ")
     # $board[new_x][new_y] = colorize(@id, @color)  # need a module that does this
     @x, @y = new_x, new_y
   end
@@ -109,27 +110,66 @@ class King < Piece
     # initialize
     # :l :r
     # move
-  def initialize(piece)
-    @id = piece.id
+  def initialize(piece, board)
+    @id = piece.id.upcase
     @color = piece.color
     @x, @y = piece.x, piece.y
-    $board[y][x] = colorize("ᵕ#{@id.upcase}ᵕ")
+    @board = board
+    @board[@x, @y] = colorize("ᵕ#{@id}ᵕ")
   end
 
 end # class King
 
-# $board contains 8 row arrays
+# @board contains 8 row arrays
 # each row array contains 4 positions + 4 blanks
 
 # "The board should be placed so that there is a light corner square nearest each player’s right-hand side and a dark corner square nearest each player’s left-hand side."
 
-$board = Array.new(8) {Array.new(8)}
-$board.each_with_index do |row, index|
-  n = index%2 == 0 ? 1 : 0
-  row.map!.with_index do |sq, index|
-    index%2 == n ? "░░░" : "   "
+class Board
+  attr_accessor :board
+  def initialize
+    @board = Array.new(8) { Array.new(8) }
+  
+    @board.each_with_index do |col, index|
+      n = index%2 == 0 ? 1 : 0
+      col.map!.with_index do |sq, index|
+        index%2 == n ? "░░░" : "   "
+      end
+    end
+  end
+
+  def render
+    top = "   ╔" + "═══╦"*7 + "═══╗" 
+    mid = "   ╠" + "═══╬"*7 + "═══╣"
+    bot = "   ╚" + "═══╩"*7 + "═══╝"
+    side = "║"
+    print " "*4, "x", Array[*0..7].join("  x")
+    print "\n", top, "\n"
+    # loop for each of 8 row arrays
+    @board[0..7].each_with_index do |row, index|
+      print "y#{index} " + side
+      row.each { |state| print state + side }
+      print "\n", index == 7 ? bot : mid, "\n"
+    end
+  end
+
+  # This allows you to change x,y by using @board[x, y] = val
+  def []=(x, y, val)
+    @board[y][x] = val
+  end
+
+end # class Board
+
+def coords_test
+  boardxy = Array.new(8) { Array.new(8) }
+  
+  boardxy.each_with_index do |a, ai|
+    a.each_with_index do |b, bi|
+      boardxy[ai][bi] = [ai, bi]
+    end
   end
 end
+pp coords_test
 
 #
   # r = []
@@ -145,35 +185,16 @@ end
 
 # rendering:
 
-def render(board_arr)
-  top = "  ╔" + "═══╦"*7 + "═══╗" 
-  mid = "  ╠" + "═══╬"*7 + "═══╣"
-  bot = "  ╚" + "═══╩"*7 + "═══╝"
-  side = "║"
-  print " "*4, Array[*0..7].join("   ")
-  print "\n", top, "\n"
-  # loop for each of 8 row hashes
-  board_arr[0..7].each_with_index do |row, index|
-    print "#{index} " + side
-    row.each do |state|             
-      print state + side
-    end
-    
-    print "\n", index == 7 ? bot : mid, "\n"
-  end
-end
+board = Board.new
 
-c = Piece.new("c", $sides[0], 3, 7)
-m = Piece.new("m", $sides[1], 2, 0)
-m = King.new(m)
+c = Piece.new("c", $sides[0], 3, 7, board)
+m = Piece.new("m", $sides[1], 2, 0, board)
+m = King.new(m, board)
+board.render
+c.r
+m.dl
+board.render
 
-p c.loc
-p c.side
-
-render($board)
-m.dr
-c.l
-render($board)
 
 #
   # a = " a ".black.bg_light_blue
@@ -221,41 +242,3 @@ render($board)
 #   7-| 0,7 | 1,7 | 2,7 | 3,7 | 4,7 | 5,7 | 6,7 | 7,7 |
 #      -----------------------------------------------
 
-# >> [3, 7]
-# >> -1
-# >>     0   1   2   3   4   5   6   7
-# >>   ╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗
-# >> 0 ║   ║░░░║\e[46m\e[30mᵕMᵕ\e[0m\e[0m║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 1 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 2 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 3 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 4 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 5 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 6 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 7 ║░░░║   ║░░░║\e[45m\e[30m c \e[0m\e[0m║░░░║   ║░░░║   ║
-# >>   ╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝
-# >>     0   1   2   3   4   5   6   7
-# >>   ╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗
-# >> 0 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 1 ║░░░║   ║░░░║\e[46m\e[30m m \e[0m\e[0m║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 2 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 3 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 4 ║   ║░░░║   ║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 5 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 6 ║   ║░░░║\e[45m\e[30m c \e[0m\e[0m║░░░║   ║░░░║   ║░░░║
-# >>   ╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣
-# >> 7 ║░░░║   ║░░░║   ║░░░║   ║░░░║   ║
-# >>   ╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝

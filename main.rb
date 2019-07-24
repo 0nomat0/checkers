@@ -1,10 +1,8 @@
-# outline brainstorm 190719
+# to do 190724
   # players choose color palette?
-      # player top/bot chosen randomly? player_bot goes first
-  # RENDER board with default states
-      # (or with each piece in default state)
-  # EACH TURN
-      # rotate board?
+  # player top/bot chosen randomly? player_bot goes first
+  # start game with pieces in default position
+
       # take input
       # change board state (or piece state)
           # unless move invalid
@@ -22,23 +20,8 @@ include Colorize
 
 $sides = [["pink", -1], ["blue", 1]]
 
-# class Player
-  #   # def player.color with attr_accessor? call that from piece methods?
-  #   attr_accessor :name, :turn #add :color, :pos ?
-
-  #   def initialize (name, color, turn, pos) # pos = 1 || -1...
-  #     @name = name
-  #     @color = color
-  #     @turn = turn
-  #     @pos = pos
-  #   end
-
-# end # class Player
-
-class Piece 
-  # creates instance methods p.color, p.color=, p.x, p.x=, etc ?
-  attr_accessor :id, :color, :side, :x, :y 
-  
+class Piece
+  attr_accessor :id, :color, :side, :x, :y
   def initialize (id, side, x, y, board)
     @id = id
     @color = side[0]
@@ -47,27 +30,15 @@ class Piece
     @board = board
     @board[@x, @y] = colorize(" #{@id} ")
   end
-
-  # multiply y based on piece color [1,-1]
-  # check 
-
-  def l
-    move(@x-1, @y+@side)
-  end
-
-  def r
-    move(@x+1, @y+@side)
-  end
-
-  def dl
-    move(@x-1, @y+1)
-  end
   
-  def dr
-    move(@x+1, @y+1)
-  end
+  def l; move(@x-1, @y+@side) end
+  def r; move(@x+1, @y+@side) end
+  # def ul; move(@x-1, @y+1) end
+  # def ur; move(@x+1, @y+1) end
+  def dl; move(@x-1, @y-1) end
+  def dr; move(@x+1, @y-1) end
 
-  # utility method:
+  # utility method :loc
   def loc; [@x, @y] end
 
   # takes dest args, sets origin blank, assigns colored string to array dest, assigns dest to piece's x,y
@@ -78,38 +49,14 @@ class Piece
     @x, @y = new_x, new_y
   end
 
-  def jump (sender)
-  end
-
-  def crown
-  end
-
+  def jump (sender); end
+  
+  def crown; end
+    
 end # class Piece
 
-# King inherits l and r, we can still use those
-  # thinking of user input. and minimizing methods
-
-
-# l / r and ul / ur / dl / dr
-# or
-# ul / ur / dl / dr --> for normal pieces, color0 uses dl/dr & color1 uses ul/ur
-  # def l
-  #   (!@king && @color == color-1) ? dl : ul  this requires adding two methods to each class
-
-  # seems like we'd need a sort of translator method (or 2) for King to use l / r
-  # ul / ur / dl / dr approach also requires translating 'l' 'r' input & mult. by (1, -1) but maybe more intuitive to code?
-    # ul is always -1,-1. 
-    # color1.l == color1.ul
-    # color0.l == color0.dl
-    # i'm probably missing something
-  
-
 class King < Piece
-  # inherited:
-    # attr_accessor *___
-    # initialize
-    # :l :r
-    # move
+
   def initialize(piece, board)
     @id = piece.id.upcase
     @color = piece.color
@@ -123,7 +70,7 @@ end # class King
 # @board contains 8 row arrays
 # each row array contains 4 positions + 4 blanks
 
-# "The board should be placed so that there is a light corner square nearest each player’s right-hand side and a dark corner square nearest each player’s left-hand side."
+# official games place dark corners at players' left-hand sides
 
 class Board
   attr_accessor :board
@@ -136,7 +83,7 @@ class Board
         index%2 == n ? "░░░" : "   "
       end
     end
-  end
+  end # class Board
 
   def render
     top = "   ╔" + "═══╦"*7 + "═══╗" 
@@ -171,6 +118,17 @@ def coords_test
 end
 pp coords_test
 
+board = Board.new
+
+c = Piece.new('c', $sides[0], 3, 7, board)
+m = Piece.new('m', $sides[1], 2, 0, board)
+m = King.new(m, board)
+board.render
+c.r
+m.dl
+board.render
+
+
 #
   # r = []
   # r[0] = (" a ".." h ").to_a
@@ -182,21 +140,6 @@ pp coords_test
   # r[6] = r[0].map { |p| p = p.black.bg_light_blue }
   # r[7] = r[1].map { |p| p = p.black.bg_pink }
 
-
-# rendering:
-
-board = Board.new
-
-c = Piece.new("c", $sides[0], 3, 7, board)
-m = Piece.new("m", $sides[1], 2, 0, board)
-m = King.new(m, board)
-board.render
-c.r
-m.dl
-board.render
-
-
-#
   # a = " a ".black.bg_light_blue
   # b = " b ".black.bg_light_blue
   # m = " m ".black.bg_pink

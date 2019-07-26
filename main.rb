@@ -90,7 +90,7 @@ end # class EmptySquare
 # each row array contains 4 positions + 4 blanks
 
 class Board
-  attr_accessor :grid
+  attr_accessor :array
 
   def initialize
     @array = Array.new(8) { Array.new(8) }   # creates empty array (filled with nils)
@@ -145,12 +145,12 @@ board = Board.new
 c = Piece.new('c', -1, 4, 5, board)
 m = Piece.new('m', 1, 3, 0, board)
 m = King.new(m, board)
-pp board.grid
+# pp board.array
 board.render
 c.r
 m.dl
 board.render
-# pp board.grid
+# pp board.array
 
 #
   # r = []

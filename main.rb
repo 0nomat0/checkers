@@ -15,6 +15,8 @@
 
 # black , red , green , yellow , blue , pink , light_blue , gray , bg_red, bg_light_blue , bg_pink
 
+# bubba testing WSL2 git sync
+
 require_relative 'module_colorize.rb'
 include Colorize
 

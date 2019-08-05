@@ -11,7 +11,8 @@
       # additional turn if appl. ; render
         # repeat checks as needed
       # change turn ; render
-
+      
+# WSL test 190805
 
 # black , red , green , yellow , blue , pink , light_blue , gray , bg_red, bg_light_blue , bg_pink
 
